@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navigation Bar */
+    
+.navbar {
+            width: 100%;
+            background: #1e3c72;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar h2 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            margin-left: 20px;
+        }
+
+        .navbar ul li {
+            margin-right: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .navbar ul li a:hover {
+            text-decoration: underline;
+        }
+    
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            width: 400px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+            position: relative;
+            margin-top: 100px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333333;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .input-wrapper {
+            width: 100%;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #74ebd5;
+            box-shadow: 0 0 10px rgba(116, 235, 213, 0.4);
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(90deg, #36D1DC, #5B86E5);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(90deg, #5B86E5, #36D1DC);
+            box-shadow: 0 8px 16px rgba(91, 134, 229, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Clear Button */
+      
+     
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: none;
+        }
+
+        .result p {
+            margin: 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .result strong {
+            color: #ff6f61;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .suggestions {
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    text-align: left;
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestions div {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+    color: #333;
+}
+
+.suggestions div:last-child {
+    border-bottom: none;
+}
+
+.suggestions div:hover {
+    background: #f0f0f0;
+}
+
+    </style>
+    <script>
+        function fetchSuggestions() {
+            let input = document.getElementById("query").value;
+            let list = document.getElementById("suggestions");
+
+            if (input.length < 1) {
+                list.style.display = "none";
+                return;
+            }
+
+            fetch(`/autocomplete?query=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    list.innerHTML = "";
+                    if (data.length === 0) {
+                        list.style.display = "none";
+                        return;
+                    }
+                    data.forEach(item => {
+                        let option = document.createElement("div");
+                        option.innerText = item;
+                        option.onclick = () => {
+                            document.getElementById("query").value = item;
+                            list.style.display = "none";
+                        };
+                        list.appendChild(option);
+                    });
+                    list.style.display = "block";
+                });
+        }
+
+        document.addEventListener("click", function (event) {
+            let list = document.getElementById("suggestions");
+            if (!event.target.closest("#query") && !event.target.closest(".suggestions")) {
+                list.style.display = "none";
+            }
+        });
+
+      
+    </script>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>🩺 Medibot</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+   
+
+            <li><a href="disease">Disease</a></li>
+            <li><a href="symptoms">Symptoms</a></li>
+            <li><a href="health">BMI</a></li>
+
+        </ul>
+    </div>
+
+    <div class="container">
+        <h1>Check Disease</h1>
+        <form action="/result" method="POST">
+            <div class="input-wrapper">
+                <input type="text" id="query" name="query" placeholder="Enter Disease Name" onkeyup="fetchSuggestions()" required>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+            <input type="submit" value="Search">
+        </form>
+        
+       
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <div id="result" class="result" {% if info %} style="display: block;" {% endif %}>
+            {% if info %}
+                <h2>{{ disease }} - Details</h2>
+                <p><strong>Description:</strong> {{ info['description'] }}</p>
+                <p><strong>Symptoms:</strong> {{ info['symptoms'] }}</p>
+                <p><strong>Treatment:</strong> {{ info['treatment'] }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <button onclick="goBackToChat()" style="padding: 10px 20px; background-color: #5B86E5; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            ⬅️ Back to Chat
+        </button>
+    </div>
+    
+    <script>
+        function goBackToChat() {
+            window.location.href = "/";
+        }
+    </script>
+    
+</body>
+</html>

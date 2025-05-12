@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptoms Checker</title>
+</head>
+<style>
+    
+
+/* General Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: #333;
+}
+
+.navbar {
+            width: 100%;
+            background: #1e3c72;
+           
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar h2 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            margin-left: 20px;
+        }
+
+        .navbar ul li {
+            margin-right: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .navbar ul li a:hover {
+            text-decoration: underline;
+        }
+/* Centered Container */
+.container {
+    background: linear-gradient(120deg, #7393d8, #36D1DC);
+    /* background: white; */
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Header */
+h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* Error Message */
+.error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Label */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Input Field */
+input {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+/* Input Focus Effect */
+input:focus {
+    border-color: #5b86e5;
+    box-shadow: 0px 0px 5px rgba(91, 134, 229, 0.5);
+}
+
+/* Button */
+.analyze {
+    background: linear-gradient(90deg, #28a745, #218838);
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    width: 60%;
+}
+
+
+.analyze:hover {
+    background: linear-gradient(90deg, #218838, #1e7e34);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+</style>
+<body>
+    <div class="navbar">
+        <h2>🩺 Medibot</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+            <li><a href="disease">Disease</a></li>
+            <li><a href="symptoms">Symptoms</a></li>
+            <li><a href="health">BMI</a></li>
+
+          
+        </ul>
+    </div>
+    <div class="container">
+
+        <h2>Symptoms Checker</h2>
+        
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        
+        <form action="/symptoms" method="POST">
+            <label for="symptoms">Enter symptoms</label>
+            <input type="text" id="symptoms" name="symptoms" placeholder="e.g., fever, cough, fatigue">
+            <button class="analyze" type="submit">Analyze</button>
+        </form>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="back-to-chat" onclick="goBackToChat()" style="padding: 10px 20px; background-color: #5B86E5; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            ⬅️ Back to Chat
+        </button>
+    </div>
+    
+    <script>
+        function goBackToChat() {
+            window.location.href = "/";
+        }
+    </script>
+    
+</body>
+</html>

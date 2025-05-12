@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Checker with Unit Options</title>
+    <style>
+        .navbar {
+        width: 100%;
+        background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .navbar h2 {
+        color: white;
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        margin-left: 20px;
+    }
+    .navbar ul li {
+        margin-right: 20px;
+    }
+    .navbar ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .navbar ul li a:hover {
+        text-decoration: underline;
+    }
+    
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        select{
+            /* padding: 15px; */
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🩺 Medibot</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+   
+
+            <li><a href="disease">Disease</a></li>
+            <li><a href="symptoms">Symptoms</a></li>
+            <li><a href="health">BMI</a></li>
+
+        </ul>
+    </div>
+<div class="container">
+    <h2>BMI Checker (with Units)</h2>
+
+    <input type="number" id="weight" placeholder="Enter weight" required>
+    <select id="weightUnit">
+        <option value="kg">kg</option>
+        <option value="g">grams</option>
+    </select>
+
+    <input type="number" id="height" placeholder="Enter height" required>
+    <select id="heightUnit">
+        <option value="cm">cm</option>
+        <option value="m">meters</option>
+    </select>
+
+    <br>
+    <button onclick="checkBMI()">Check BMI</button>
+    <div id="result"></div>
+</div>
+
+<script>
+function checkBMI() {
+    let weight = parseFloat(document.getElementById('weight').value);
+    let height = parseFloat(document.getElementById('height').value);
+    let weightUnit = document.getElementById('weightUnit').value;
+    let heightUnit = document.getElementById('heightUnit').value;
+
+    if (!weight || !height || weight <= 0 || height <= 0) {
+        document.getElementById('result').innerHTML = "Please enter valid weight and height.";
+        return;
+    }
+
+    // Convert weight to kg if entered in grams
+    if (weightUnit === "g") {
+        weight = weight / 1000; // grams to kg
+    }
+
+    // Convert height to meters
+    if (heightUnit === "cm") {
+        height = height / 100; // cm to meters
+    }
+    // if already in meters, no need to convert
+
+    // Calculate BMI
+    let bmi = weight / (height * height);
+    bmi = bmi.toFixed(1);
+
+    let message = "";
+
+    if (bmi < 18.5) {
+        message = "Underweight (Possible health risks)";
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+        message = "Normal weight (Healthy)";
+    } else if (bmi >= 25 && bmi < 29.9) {
+        message = "Overweight (Risk of diseases)";
+    } else {
+        message = "Obesity (High risk of diseases)";
+    }
+
+    document.getElementById('result').innerHTML = `Your BMI is <strong>${bmi}</strong><br>${message}`;
+}
+</script>
+
+</body>
+</html>

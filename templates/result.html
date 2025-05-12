@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Chatbot - Results</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 80px;
+        }
+
+        /* Navbar */
+        .navbar {
+        width: 100%;
+        background: #1e3c72;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+
+    .navbar h2 {
+        color: white;
+        margin: 0;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        margin-left: 20px; /* Push links closer to Medibot name */
+    }
+
+    .navbar ul li {
+        display: inline;
+        margin-right: 15px;
+    }
+
+    .navbar ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .navbar ul li a:hover {
+        text-decoration: underline;
+    }
+
+
+    
+        /* Search Form */
+        .search-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .input-wrapper {
+            width: 100%;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #74ebd5;
+            box-shadow: 0 0 10px rgba(116, 235, 213, 0.4);
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(90deg, #36D1DC, #5B86E5);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(90deg, #5B86E5, #36D1DC);
+            box-shadow: 0 8px 16px rgba(91, 134, 229, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Result Section */
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .result-container h2 {
+            color: #2c3e50;
+        }
+
+        .result-container p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Show results when available */
+        .result-container.show {
+            display: block;
+        }
+        .result-container.show #wiki{
+            color:  blue;
+        }
+        .result-container.show #wiki .wiki_url{
+            color:  black;
+        }
+        .result-container.show #wiki .wiki_url:hover{
+            color:  red;
+        }
+        /* Clear Button */
+        .clear-btn {
+            display: block;
+            margin: 15px auto 0;
+            padding: 10px 20px;
+            background: #ff6f61;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: #e64c48;
+        }
+
+        /* Suggestion Box */
+        .suggestions {
+            width: 100%;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            text-align: left;
+            display: none;
+            z-index: 1000;
+        }
+
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border-bottom: 1px solid #eee;
+        }
+
+        .suggestions div:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions div:hover {
+            background: #f0f0f0;
+        }
+
+    </style>
+    <script>
+        function fetchSuggestions() {
+            let input = document.getElementById("query").value;
+            let list = document.getElementById("suggestions");
+
+            if (input.length < 1) {
+                list.style.display = "none";
+                return;
+            }
+
+            fetch(`/autocomplete?query=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    list.innerHTML = "";
+                    if (data.length === 0) {
+                        list.style.display = "none";
+                        return;
+                    }
+                    data.forEach(item => {
+                        let option = document.createElement("div");
+                        option.innerText = item;
+                        option.onclick = () => {
+                            document.getElementById("query").value = item;
+                            list.style.display = "none";
+                        };
+                        list.appendChild(option);
+                    });
+                    list.style.display = "block";
+                });
+        }
+
+        document.addEventListener("click", function (event) {
+            let list = document.getElementById("suggestions");
+            if (!event.target.closest("#query") && !event.target.closest(".suggestions")) {
+                list.style.display = "none";
+            }
+        });
+
+        function clearSearch() {
+            window.location.href = '/';  
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>🩺 Medibot</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="about">About</a></li>
+         
+            <li><a href="disease">Disease</a></li>
+            <li><a href="symptoms">Symptoms</a></li>
+            <li><a href="health">BMI</a></li>
+          
+        </ul>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-container">
+        <form action="/result" method="POST">
+            <div class="input-wrapper">
+                <input type="text" id="query" name="query" placeholder="Enter Disease Name" onkeyup="fetchSuggestions()" required>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-container show">
+        {% if info %}
+            <h2>{{ disease }} - Details</h2>
+            <p><strong>Description:</strong> {{ info['description'] }}</p>
+            <p><strong>Symptoms:</strong> {{ info['symptoms'] }}</p>
+            <p><strong>Treatment:</strong> {{ info['treatment'] }}</p>
+        {% endif %}
+        {% if wiki_url %}
+    <p id="wiki">Learn more: <a class="wiki_url" href="{{ wiki_url }}" target="_blank">{{ disease }} on Wikipedia</a></p>
+{% endif %}
+
+    </div>
+</body>
+</html>

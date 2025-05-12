@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptoms Result</title>
+    <style>
+        /* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f8fb;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Centered Container */
+.container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Header */
+h2 {
+    color: #2c3e50;
+    font-size: 34px;
+    margin-bottom: 15px;
+}
+
+/* Symptoms Text */
+p {
+    font-size: 20px;
+    margin: 10px 0;
+    color: #555;
+}
+
+/* Possible Diseases List */
+ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: left;
+}
+
+ul li {
+    background: #ecf0f1;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Bold Text */
+strong {
+    color: #2980b9;
+    font-size: 18px;
+}
+
+/* Horizontal Line */
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 15px 0;
+}
+
+/* Back Button */
+a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+a:hover {
+    background: #2980b9;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        margin: 20px auto;
+        padding: 15px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+
+        <h2>Analysis Results</h2>
+        
+    <p><strong>Entered Symptoms:</strong> {{ ", ".join(symptoms) }}</p>
+
+    {% if diseases %}
+        <h3>Possible Diseases:</h3>
+        <ul>
+            {% for disease in diseases %}
+            <li>
+                <strong>{{ disease.name }}</strong><br>
+                    <b>Recommended Medicines:</b> {{ ", ".join(disease.medicines) if disease.medicines else "N/A" }}<br>
+                    <b>Consult Specialist:</b> {{ disease.specialist }}
+                </li>
+                <hr>
+                {% endfor %}
+        </ul>
+        {% else %}
+        <p>No matching diseases found.</p>
+        {% endif %}
+
+        <a href="/symptoms">Back</a>
+    </div>
+    </body>
+    </html>
+    
