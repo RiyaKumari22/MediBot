@@ -96,5 +96,5 @@ def about():
 @app.route('/health')
 def health():
     return render_template('health.html')
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
